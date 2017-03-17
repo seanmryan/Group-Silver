@@ -1,0 +1,661 @@
+# Node rules:
+## Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+## Dependency directory
+## Commenting this out is preferred by some people, see
+## https://docs.npmjs.com/misc/faq#should-i-check-my-node_modules-folder-into-git
+node_modules
+
+# Book build output
+_book
+
+# eBook build output
+*.epub
+*.mobi
+*.pdf
+Deliverable 2
+
+Week 8 -16/3/17
+
+Group &lt;19&gt;
+
+Student: Sean Ryan (0875112)
+
+Student: Michael Moore (16069196)
+
+Student: Terry O&#39;Shea (09003150)
+
+Student: Andrey Gubarkov (16146395)
+
+Contents
+
+1. Introduction .....................................................................................................2
+
+2.Database Tables................................................................................................3
+
+1. Introduction
+
+This report details the database schema as created by Group &lt;19&gt; for the CS4065
+
+Web Infrastructures
+
+project. The document consists of a single section, containing:
+
+• Database Table Synopsis – a simple listing of the attributes and datatypes for every
+
+table in the
+
+database. In some cases this is followed by a short note explaining the logic behind
+
+the grouping of certain attributes in the same table.
+
+• Table SQL Creation Declarations – the SQL statements used to create each table
+
+on the group’s
+
+MySQL database, including information on Foreign Key constraints, use of auto-
+
+increment , and
+
+default attribute values.
+
+• Link to Git Repository file -
+
+https://github.com/&lt;account&gt;/&lt;project&gt;/blob/master/database/
+
+Picture of Database Schema
+
+USERTABLE
+
+The USERTABLE consists of the user information user email password,
+
+firstname, and last name are all varchar with lenths depending on estimated
+
+max demand. The userID and user points are both int(11) to store the
+
+values. The user discipline is entered in text.
+
+User points are used to determine if the user is a moderator or not.
+
+TASKTABLE
+
+The purposes of this table are to store all the information on the tasks
+
+like the clam and submission dates etc.
+
+The TASKTABLE uses ints for IDs and page/word count, and tinyints for the
+
+flagged tasks. The file format and type are both in varchar, and task desc
+
+is in text these were all chosen to best enter the information in the most
+
+likely format.
+
+FLAGGEDTASKS
+
+The FLAGGEDTASKS table records all the flagged tasks keeping all the IDs as
+
+ints and the reason for the flag as text.
+
+BANNEDUSERS
+
+This Table keeps a record off the banned users on the site using tinyint to
+
+for information on their banned status and each users ID is stored as an
+
+int.
+
+CLAIMEDTASKS
+
+The CLAIMEDTASKS table stores the IDs of the task and claim as well as the
+
+date claimed
+
+TASKSTATUS
+
+This table tracks the status of each task using its status ID and task ID
+
+as well as storing the status
+
+There are 5 statuses pending, claimed, failed, checked and flagged.
+
+TAGIDS
+
+Stores the tag and task IDs using ints.
+
+TAGNAMES
+
+TAGNAMES stores the tag by using a varchar tagname and an int tagID
+
+STATUSID
+
+The STATUS table stores the ID and also the status as avarchar.
+
+2. Database Tables
+
+NOTE: The tables are created using PHPMyAdmin, therefore the Primary Keys,
+
+Foreign Keys and constraints are not stated in the CREATE TABLE statement.
+
+These ALTER TABLE Statements are shown the CREAT TABLE statements.
+
+USERTABLE
+
+UserID UserEmail UserPasswor
+
+d
+
+FirstName LastName
+
+INT(11
+
+)
+
+VARCHAR(40
+
+)
+
+VARCHAR(64) VARCHAR(30
+
+)
+
+VARCHAR(30
+
+)
+
+UserDisciplin
+
+e
+
+UserPoint
+
+s
+
+TEXT INT(11)
+
+CONTD.
+
+CREATE TABLE `usertable` (
+
+`UserID` int(11) NOT NULL,
+
+`UserEmail` varchar(40) NOT NULL,
+
+`UserPassword` varchar(64) NOT NULL,
+
+`FirstName` varchar(30) NOT NULL,
+
+`LastName` varchar(30) NOT NULL,
+
+`UserDiscipline` text NOT NULL,
+
+`UserPoints` int(11) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `usertable`
+
+--
+
+ALTER TABLE `usertable`
+
+ADD PRIMARY KEY (`UserID`);
+
+TASKSTABLE
+
+TaskID UserID TaskTitl
+
+e
+
+TaskNoPage
+
+s
+
+TaskWordCoun
+
+t
+
+TaskFileForma
+
+t
+
+INT(11
+
+)
+
+INT(11
+
+)
+
+TinyText INT(11) INT(11) VARCHAR(12)
+
+TaskDes
+
+c
+
+ClaimDeadlin
+
+e
+
+SubmissionDeadlin
+
+e
+
+TaskType FlaggedTask
+
+s
+
+TEXT DATE DATE VARCHAR(20
+
+)
+
+TINYINT(1)
+
+CONTD.
+
+CREATE
+
+TABLE `taskstable` (
+
+`TaskID` int(11) NOT NULL,
+
+`UserID` int(11) NOT NULL,
+
+`TaskTitle` tinytext NOT NULL,
+
+`TaskNoPages` int(11) NOT NULL,
+
+`TaskWordCount` int(11) NOT NULL,
+
+`TaskFileFormat` varchar(12) NOT NULL,
+
+`TaskDesc` text NOT NULL,
+
+`ClaimDeadline` date NOT NULL,
+
+`SubmissionDeadline` date NOT NULL,
+
+`TaskType` varchar(20) NOT NULL,
+
+`FlaggedTasks` tinyint(1) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- AUTO_INCREMENT for table `taskstable`
+
+--
+
+ALTER TABLE `taskstable`
+
+MODIFY `TaskID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+
+-- Indexes for table `taskstable`
+
+--
+
+ALTER TABLE `taskstable`
+
+ADD PRIMARY KEY (`TaskID`),
+
+ADD KEY `UserID` (`UserID`),
+
+ADD KEY `FlaggedTasks` (`FlaggedTasks`);
+
+--
+
+-- Constraints for table `taskstable`
+
+--
+
+ALTER TABLE `taskstable`
+
+ADD CONSTRAINT `taskstable_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES
+
+`usertable` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE,
+
+ADD CONSTRAINT `taskstable_ibfk_3` FOREIGN KEY (`TaskID`) REFERENCES
+
+`taskstatus` (`TaskID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+FLAGGEDTASKS
+
+FlagID UserID TaskID FlagReaso
+
+n
+
+INT(11
+
+)
+
+INT(11
+
+)
+
+INT(11
+
+)
+
+TEXT
+
+CREATE TABLE `flaggedtasks` (
+
+`FlagID` int(11) NOT NULL,
+
+`UserID` int(11) NOT NULL,
+
+`TaskID` int(11) NOT NULL,
+
+`FlagReason` text NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `flaggedtasks`
+
+--
+
+ALTER TABLE `flaggedtasks`
+
+ADD PRIMARY KEY (`FlagID`),
+
+ADD KEY `UserID` (`UserID`),
+
+ADD KEY `TaskID` (`TaskID`);
+
+--
+
+-- Constraints for table `flaggedtasks`
+
+--
+
+ALTER TABLE `flaggedtasks`
+
+ADD CONSTRAINT `flaggedtasks_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES
+
+`usertable` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE,
+
+ADD CONSTRAINT `flaggedtasks_ibfk_2` FOREIGN KEY (`TaskID`) REFERENCES
+
+`taskstable` (`TaskID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+BANNEDUSERS
+
+Banned UserID BanStatus
+
+Tinyint(1
+
+)
+
+INT(11
+
+)
+
+TINYINT(1
+
+)
+
+CREATE TABLE `bannedusers` (
+
+`Banned` tinyint(1) NOT NULL,
+
+`UserID` int(11) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `bannedusers`
+
+--
+
+ALTER TABLE `bannedusers`
+
+ADD PRIMARY KEY (`UserID`),
+
+ADD KEY `UserID` (`UserID`);
+
+--
+
+-- Constraints for table `bannedusers`
+
+--
+
+ALTER TABLE `bannedusers`
+
+ADD CONSTRAINT `bannedusers_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES
+
+`usertable` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+CLAIMEDTASKS
+
+TaskID ClaimI
+
+D
+
+DateClaime
+
+d
+
+INT(11
+
+)
+
+INT(11) DATE
+
+CREATE TABLE `claimedtasks` (
+
+`TaskID` int(11) NOT NULL,
+
+`ClaimID` int(11) NOT NULL,
+
+`DateClaimed` date NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `claimedtasks`
+
+--
+
+ALTER TABLE `claimedtasks`
+
+ADD PRIMARY KEY (`ClaimID`),
+
+ADD KEY `TaskID` (`TaskID`);
+
+--
+
+-- Constraints for table `claimedtasks`
+
+--
+
+ALTER TABLE `claimedtasks`
+
+ADD CONSTRAINT `claimedtasks_ibfk_1` FOREIGN KEY (`TaskID`) REFERENCES
+
+`taskstable` (`TaskID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+
+-- AUTO_INCREMENT for table `claimedtasks`
+
+--
+
+ALTER TABLE `claimedtasks`
+
+MODIFY `ClaimID` int(11) NOT NULL AUTO_INCREMENT;
+
+TASKSTATUS
+
+StatusI
+
+D
+
+TaskID Status
+
+INT(11) INT(11
+
+)
+
+VARCHAR(30
+
+)
+
+CREATE TABLE `taskstatus` (
+
+`StatusID` int(11) NOT NULL,
+
+`TaskID` int(11) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `taskstatus`
+
+--
+
+ALTER TABLE `taskstatus`
+
+ADD PRIMARY KEY (`StatusID`),
+
+ADD KEY `TaskID` (`TaskID`);
+
+--
+
+-- Constraints for table `taskstatus`
+
+--
+
+ALTER TABLE `taskstatus`
+
+ADD CONSTRAINT `taskstatus_ibfk_1` FOREIGN KEY (`StatusID`) REFERENCES
+
+`status` (`StatusID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+TAGIDS
+
+TagID TaskID
+
+INT(11
+
+)
+
+INT(11
+
+)
+
+CREATE TABLE `tagids` (
+
+`TagID` int(11) NOT NULL,
+
+`TaskID` int(11) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `tagids`
+
+--
+
+ALTER TABLE `tagids`
+
+ADD PRIMARY KEY (`TagID`),
+
+ADD KEY `TaskID` (`TaskID`);
+
+--
+
+-- Constraints for table `tagids`
+
+--
+
+ALTER TABLE `tagids`
+
+ADD CONSTRAINT `tagids_ibfk_1` FOREIGN KEY (`TaskID`) REFERENCES
+
+`taskstable` (`TaskID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+TAGNAMES
+
+TagName TagID
+
+VARCHAR(30
+
+)
+
+INT(11
+
+)
+
+CREATE TABLE `tagnames` (
+
+`TagName` varchar(20) NOT NULL,
+
+`TagID` int(11) NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `tagnames`
+
+--
+
+ALTER TABLE `tagnames`
+
+ADD PRIMARY KEY (`TagName`),
+
+ADD KEY `TagID` (`TagID`);
+
+--
+
+-- Constraints for table `tagnames`
+
+--
+
+ALTER TABLE `tagnames`
+
+ADD CONSTRAINT `tagnames_ibfk_1` FOREIGN KEY (`TagID`) REFERENCES
+
+`tagids` (`TagID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+STATUS
+
+StatusI
+
+D
+
+Status
+
+INT(11) VARCHAR(20
+
+)
+
+CREATE TABLE `status` (
+
+`StatusID` int(11) NOT NULL,
+
+`Status` varchar(20) CHARACTER SET utf8mb4 NOT NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+
+-- Indexes for table `status`
+
+--
+
+ALTER TABLE `status`
+
+ADD PRIMARY KEY (`StatusID`);
